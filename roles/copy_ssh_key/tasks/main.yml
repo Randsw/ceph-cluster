@@ -1,0 +1,24 @@
+---
+- name: Copy ssh public key to server
+  authorized_key:
+    user: "{{ item.name }}"
+    state: present
+    manage_dir: yes
+    key: "{{ item.key }}"
+  with_items:
+    - "{{ ssh_users }}"
+  tags: ssh
+
+- name: Configure ssh server
+  template:
+    src: ssh-setup.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    mode: '0644'
+    validate: /usr/sbin/sshd -t -f %s
+    backup: yes
+  notify: restart ssh
+  tags: ssh
+
+- name: Force all notified handlers to run at this point
+  meta: flush_handlers
