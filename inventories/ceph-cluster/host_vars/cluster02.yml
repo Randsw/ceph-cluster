@@ -1,0 +1,25 @@
+ansible_host: 192.168.1.33
+ansible_user: cluster02
+ansible_ssh_private_key_file: ~/.ssh/cluster
+
+ssh_users:
+    name: cluster02
+    key: "{{ lookup('file', 'files/cluster.pub') }}"
+    servers:
+        - cluster
+    state: present
+
+docker_users: "{{ ansible_user }}"
+
+ntp_servers:
+  # Use servers from the NTP Pool Project. Approved by Ubuntu Technical Board
+  # on 2011-02-08 (LP: #104525). See http://www.pool.ntp.org/join.html for
+  # more information.
+
+ - 0.ubuntu.pool.ntp.org
+ - 1.ubuntu.pool.ntp.org
+ - 2.ubuntu.pool.ntp.org
+ - 3.ubuntu.pool.ntp.org
+
+ # Use Ubuntu's ntp server as a fallback.
+ - ntp.ubuntu.com
